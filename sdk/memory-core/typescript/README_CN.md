@@ -113,7 +113,7 @@ await client.addConversation({
 从可信部署配置创建客户端，在召回和完整回合结束后的采集 hook 中使用：
 
 ```typescript
-import { MemoryClient } from "@tencentdb-agent-memory/memory-sdk-ts/v3";
+import { MemoryClient } from "@tencentdb-agent-memory/memory-sdk-ts-v2";
 
 const memory = new MemoryClient({
   endpoint: process.env.TDAI_MEMORY_ENDPOINT!,
