@@ -178,7 +178,7 @@ openclaw gateway restart
 
 provider 将 `memory` 搜索映射到 v3 L1 原子记忆。只有 OpenClaw 提供当前且由宿主签发的 conversation audience 时才开放 `sessions`；请求会通过 SDK isolation 带上 audience 的 session ID。owner-private 和 operator 调用不会获得对话搜索能力。v3 SDK 不支持的分页、项目筛选和候选枚举均不对宿主声明支持。
 
-每个 open handle 都绑定到调用者的实时权限。session 调用必须有 agent 匹配的宿主 audience；team、user 和可选的远端 agent 身份来自插件配置或宿主提供的 agent ID。缺少 team 或 user ID 时不会猜测或补默认归属。引用只在生成它的 handle 中有效；get 会在相同 isolation 和 session 范围内重新执行原始有界搜索，确认引用仍可见后才返回内容。调用者取消会传到 HTTP 请求；一次多来源搜索共享 30 秒 deadline；关闭 handle 会中止在途请求并清除引用缓存。
+每个 open handle 都绑定到调用者的实时权限。agent ID 取自 OpenClaw 本次 open 上下文，因此共用同一插件配置的多个 agent 仍会落在各自的 Gateway 隔离范围。team 和 user ID 来自插件配置；缺少时会拒绝打开，不会猜测默认归属。session 调用还必须有 agent 匹配的宿主 audience。引用只在生成它的 handle 中有效；get 会在相同 isolation 和 session 范围内重新执行原始有界搜索，确认引用仍可见后才返回内容。调用者取消会传到 HTTP 请求；一次多来源搜索共享 30 秒 deadline；关闭 handle 会中止在途请求并清除引用缓存。
 
 ## 配置项
 

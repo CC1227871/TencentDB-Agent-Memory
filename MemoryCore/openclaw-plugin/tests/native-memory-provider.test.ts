@@ -154,10 +154,35 @@ test("plugin entrypoint registers and exercises a caller-scoped native provider"
   assert.ok(scopedRequests.length >= 4, "search and get should each reach the v3 API");
   for (const request of scopedRequests) {
     assert.equal(request.body.team_id, "team-1");
-    assert.equal(request.body.agent_id, "gateway-agent-1");
+    assert.equal(request.body.agent_id, "openclaw-agent-1");
     assert.equal(request.body.user_id, "user-1");
     assert.equal(request.body.session_id, "gateway-session-1");
   }
+
+  const secondAgentAuthority = {
+    ...authority,
+    sessionKey: "openclaw/second-agent-key",
+    sessionId: "gateway-session-2",
+    audience: {
+      kind: "conversation",
+      agentId: "openclaw-agent-2",
+      sessionKey: "openclaw/second-agent-key",
+      sessionId: "gateway-session-2",
+    },
+  };
+  const secondAgent = await runtime.open({
+    cfg: {},
+    agentId: "openclaw-agent-2",
+    context: { authority: secondAgentAuthority, assertCurrent() {} },
+  });
+  assert.ok(secondAgent.provider, secondAgent.error);
+  await secondAgent.provider.search({ query: "tea", sources: ["memory"] });
+  const secondAgentRequest = requests.find((request) =>
+    request.body.session_id === "gateway-session-2" &&
+    request.path.endsWith("/atomic/search"),
+  );
+  assert.equal(secondAgentRequest?.body.agent_id, "openclaw-agent-2");
+  await secondAgent.provider.close();
 
   const cancelledController = new AbortController();
   const cancellable = await runtime.open({

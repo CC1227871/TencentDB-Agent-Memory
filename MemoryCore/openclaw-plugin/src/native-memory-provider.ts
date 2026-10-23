@@ -244,8 +244,9 @@ function resolveCallerScope(params: OpenParams, config: PluginConfig) {
   const server = config.server ?? {};
   const teamId = nonEmpty(server.teamId);
   const userId = nonEmpty(server.userId);
-  const configuredAgentId = nonEmpty(server.agentId);
-  const agentId = configuredAgentId ?? hostAgentId;
+  // The host resolves the active agent for every open(). A static plugin
+  // setting must never collapse multiple OpenClaw agents into one Gateway ID.
+  const agentId = hostAgentId;
   const endpoint = nonEmpty(server.url);
   const apiKey = nonEmpty(server.apiKey);
   const serviceId = nonEmpty(server.instanceId);
